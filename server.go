@@ -137,11 +137,12 @@ func (s *Server) Run(addr string) {
 }
 
 // RunFcgi starts the web application and serves FastCGI requests for s.
-func (s *Server) RunFcgi(addr string) {
+/*func (s *Server) RunFcgi(addr string) {
     s.initServer()
     s.Logger.Printf("web.go serving fcgi %s\n", addr)
     s.listenAndServeFcgi(addr)
 }
+*/
 
 // RunScgi starts the web application and serves SCGI requests for s.
 func (s *Server) RunScgi(addr string) {

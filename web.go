@@ -203,9 +203,9 @@ func RunScgi(addr string) {
 }
 
 // RunFcgi starts the web application and serves FastCGI requests for the main server.
-func RunFcgi(addr string) {
-    mainServer.RunFcgi(addr)
-}
+//func RunFcgi(addr string) {
+//    mainServer.RunFcgi(addr)
+//}
 
 // Close stops the main server.
 func Close() {
