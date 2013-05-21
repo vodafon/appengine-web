@@ -4,85 +4,73 @@ web.go is the simplest way to write web applications in the Go programming langu
 
 ## Overview
 
-web.go should be familiar to people who've developed websites with higher-level web frameworks like sinatra or web.py. It is designed to be a lightweight web framework that doesn't impose any scaffolding on the user. Some features include:
-
-* Routing to url handlers based on regular expressions
-* Secure cookies
-* Support for fastcgi and scgi
-* Web applications are compiled to native code. This means very fast execution and page render speed
-* Efficiently serving static files
+Fork github.com/hoisie/web for use web.go in Google App Engine
 
 ## Installation
 
-Make sure you have the a working Go environment. See the [install instructions](http://golang.org/doc/install.html). web.go targets the Go `release` branch.
+In App directory run:
 
-To install web.go, simply run:
+```
+$ git clone git://github.com/vodafon/appengine-web.git github.com/vodafon/appengine-web
+```
 
-    go get github.com/hoisie/web
+Remove git files:
 
-To compile it from source:
+```
+$ rm -rf github.com/vodafon/appengine-web/.git
+$ rm -rf github.com/vodafon/appengine-web/.gitignore
+$ rm -rf github.com/vodafon/appengine-web/Readme.md
+```
 
-    git clone git://github.com/hoisie/web.git
-    cd web && go build
+### Write you app
 
-## Example
 ```go
-package main
-    
+package hello
+
 import (
-    "github.com/hoisie/web"
+    "github.com/vodafon/appengine-web"
+    "net/http"
 )
-    
-func hello(val string) string { return "hello " + val } 
-    
-func main() {
-    web.Get("/(.*)", hello)
-    web.Run("0.0.0.0:9999")
+
+func init() {
+    web.Get("/", root)
+
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        web.Process(w, r)
+    })
+}
+
+func root() string {
+    return "Hello, Go"
 }
 ```
 
-To run the application, put the code in a file called hello.go and run:
+### Add app.yaml
 
-    go run hello.go
-    
-You can point your browser to http://localhost:9999/world . 
+```
+application: your-web-app
+version: 1
+runtime: go
+api_version: go1
 
-### Getting parameters
-
-Route handlers may contain a pointer to web.Context as their first parameter. This variable serves many purposes -- it contains information about the request, and it provides methods to control the http connection. For instance, to iterate over the web parameters, either from the URL of a GET request, or the form data of a POST request, you can access `ctx.Params`, which is a `map[string]string`:
-
-```go
-package main
-
-import (
-    "github.com/hoisie/web"
-)
-    
-func hello(ctx *web.Context, val string) { 
-    for k,v := range ctx.Params {
-		println(k, v)
-	}
-}   
-    
-func main() {
-    web.Get("/(.*)", hello)
-    web.Run("0.0.0.0:9999")
-}
+handlers:
+- url: /static
+  static_dir: static
+- url: /.*
+  script: _go_app
 ```
 
-In this example, if you visit `http://localhost:9999/?a=1&b=2`, you'll see the following printed out in the terminal:
+### Upload App
 
-    a 1
-    b 2
+```
+$ appcfg.py update .
+```
 
 ## Documentation
 
 API docs are hosted at http://webgo.io
 
-If you use web.go, I'd greatly appreciate a quick message about what you're building with it. This will help me get a sense of usage patterns, and helps me focus development efforts on features that people will actually use. 
 
 ## About
 
 web.go was written by [Michael Hoisie](http://hoisie.com). 
-
-
